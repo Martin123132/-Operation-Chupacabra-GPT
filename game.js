@@ -4,6 +4,7 @@ const ctx = canvas?.getContext("2d");
 if (!canvas || !ctx) {
   throw new Error("Canvas initialization failed.");
 }
+const ctx = canvas.getContext("2d");
 
 const TILE = 32;
 const MAP_W = 24;
@@ -22,6 +23,8 @@ const player = {
   size: 22,
   speed: 2.4,
   facing: "down"
+  speed: 2.6,
+  color: "#f8f8f2"
 };
 
 const world = {
@@ -39,6 +42,7 @@ const world = {
 };
 
 function buildWorld() {
+function buildWalls() {
   for (let x = 0; x < MAP_W; x++) {
     world.walls.push({ x, y: 0 });
     world.walls.push({ x, y: MAP_H - 1 });
@@ -56,6 +60,7 @@ function buildWorld() {
   world.decor.push({ x: 20, y: 15, kind: "terminal" });
   world.decor.push({ x: 6, y: 10, kind: "crate" });
   world.decor.push({ x: 18, y: 6, kind: "crate" });
+  for (let x = 4; x < 20; x++) if (x !== 11) world.walls.push({ x, y: 8 });
 }
 
 function drawTile(x, y, color) {
@@ -111,6 +116,20 @@ function drawNodes() {
     drawTile(n.x, n.y, pulse);
     ctx.fillStyle = "rgba(0,0,0,0.5)";
     ctx.fillRect(n.x * TILE + 9, n.y * TILE + 9, 14, 14);
+function drawWorld() {
+  for (let y = 0; y < MAP_H; y++) {
+    for (let x = 0; x < MAP_W; x++) {
+      drawTile(x, y, (x + y) % 2 === 0 ? "#30415a" : "#2b3a52");
+    }
+  }
+
+  world.walls.forEach((w) => drawTile(w.x, w.y, "#202736"));
+
+  world.nodes.forEach((n) => {
+    const color = n.found ? "#50fa7b" : "#ff79c6";
+    drawTile(n.x, n.y, color);
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    ctx.fillRect(n.x * TILE + 8, n.y * TILE + 8, 16, 16);
   });
 }
 
@@ -127,6 +146,10 @@ function drawPlayer() {
   if (player.facing === "down") ctx.fillRect(x + 9, y + 16, 4, 4);
   if (player.facing === "left") ctx.fillRect(x + 1, y + 9, 4, 4);
   if (player.facing === "right") ctx.fillRect(x + 16, y + 9, 4, 4);
+  ctx.fillStyle = player.color;
+  ctx.fillRect(player.x, player.y, player.size, player.size);
+  ctx.fillStyle = "#8be9fd";
+  ctx.fillRect(player.x + 6, player.y + 4, 10, 6);
 }
 
 function collidesWall(nextX, nextY) {
@@ -143,6 +166,10 @@ function collidesWall(nextX, nextY) {
     const tx = Math.floor(px / TILE);
     const ty = Math.floor(py / TILE);
     return blocked.some((w) => w.x === tx && w.y === ty);
+  return points.some(([px, py]) => {
+    const tx = Math.floor(px / TILE);
+    const ty = Math.floor(py / TILE);
+    return world.walls.some((w) => w.x === tx && w.y === ty);
   });
 }
 
@@ -166,6 +193,10 @@ function updatePlayer() {
     dx += player.speed;
     player.facing = "right";
   }
+  if (keys["ArrowUp"] || keys["w"]) dy -= player.speed;
+  if (keys["ArrowDown"] || keys["s"]) dy += player.speed;
+  if (keys["ArrowLeft"] || keys["a"]) dx -= player.speed;
+  if (keys["ArrowRight"] || keys["d"]) dx += player.speed;
 
   const nextX = player.x + dx;
   const nextY = player.y + dy;
@@ -219,6 +250,28 @@ function loop() {
   frame += 1;
   updatePlayer();
   drawFrame();
+  if (node) {
+    node.found = true;
+    world.scanned += 1;
+    logEl.textContent = `Node secured: ${node.label}. Residual signal captured.`;
+    progressEl.textContent = `${world.scanned} / ${world.nodes.length} nodes`;
+
+    if (world.scanned === world.nodes.length) {
+      world.finished = true;
+      missionEl.textContent = "Mission complete: Contact with the CMM remains inconclusive.";
+      missionEl.className = "complete";
+      logEl.textContent = "Final report generated with maximum confidence and minimal evidence.";
+      logEl.className = "warning";
+    }
+  } else {
+    logEl.textContent = "No anomaly in range. Continue deep field sweep.";
+  }
+}
+
+function loop() {
+  updatePlayer();
+  drawWorld();
+  drawPlayer();
   requestAnimationFrame(loop);
 }
 
@@ -235,4 +288,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 buildWorld();
+window.addEventListener("keyup", (e) => (keys[e.key] = false));
+
+buildWalls();
 loop();
