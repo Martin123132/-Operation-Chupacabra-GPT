@@ -19,6 +19,13 @@
     return;
   }
 
+  }
+
+  if (!canvas || !ctx) {
+    setText(logEl, 'Rendering error: unable to initialize canvas in this browser context.');
+    return;
+  }
+
   var TILE = 32;
   var MAP_W = 24;
   var MAP_H = 18;
@@ -86,6 +93,13 @@
   var keys = {};
   var frame = 0;
 
+  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (cb) { return window.setTimeout(cb, 16); };
+
+  window.addEventListener('error', function (evt) {
+    var msg = evt && evt.message ? evt.message : 'Unknown runtime error';
+    setText(logEl, 'Runtime error: ' + msg);
+  });
+
   var player = {
     x: 2 * TILE,
     y: 2 * TILE,
@@ -121,6 +135,12 @@
     for (y = 1; y < MAP_H - 1; y++) {
       world.walls.push({ x: 0, y: y });
       world.walls.push({ x: MAP_W - 1, y: y });
+    }
+
+    for (x = 4; x < 20; x++) {
+      if (x !== 11) world.walls.push({ x: x, y: 8 });
+    }
+
     }
 
     for (x = 4; x < 20; x++) {
@@ -321,6 +341,53 @@
         }
         return;
       }
+    }
+
+    setText(logEl, 'No anomaly in range. Sweep closer to a magenta signal tile.');
+  }
+
+  function drawFrame() {
+    drawGround();
+    drawWater();
+    drawWalls();
+    drawDecor();
+    drawNodes();
+    drawPlayer();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+  }
+
+  function loop() {
+    frame += 1;
+    updatePlayer();
+    drawFrame();
+    raf(loop);
+  }
+
+  function onKeyDown(e) {
+    var key = e.key;
+    if (key && key.length === 1) key = key.toLowerCase();
+    keys[key] = true;
+
+    if (key === 'arrowup' || key === 'arrowdown' || key === 'arrowleft' || key === 'arrowright' || e.code === 'Space') {
+      e.preventDefault();
+    }
+
+    if (e.code === 'Space') scanNearbyNode();
+  }
+
+  function onKeyUp(e) {
+    var key = e.key;
+    if (key && key.length === 1) key = key.toLowerCase();
+    keys[key] = false;
+  }
+
+  buildWorld();
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+  drawFrame();
+  raf(loop);
     }
 
     setText(logEl, 'No anomaly in range. Sweep closer to a magenta signal tile.');

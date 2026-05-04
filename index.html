@@ -30,6 +30,26 @@
     </section>
   </main>
 
+  <script>
+    window.__chupa_started = false;
+    var scriptAttempts = ['./game.js', 'game.js', '/game.js'];
+    var scriptIndex = 0;
+
+    function showStartupFailure(reason) {
+      var canvas = document.getElementById('game');
+      var log = document.getElementById('log');
+      if (log) {
+        log.textContent = 'Startup failure: ' + reason;
+      }
+      if (!canvas || !canvas.getContext) return;
+
+      var ctx = canvas.getContext('2d');
+      var tile = 32;
+      var x;
+      var y;
+
+      for (y = 0; y < canvas.height / tile; y++) {
+        for (x = 0; x < canvas.width / tile; x++) {
 
   <script>
     window.__chupa_started = false;
@@ -46,6 +66,51 @@
           ctx.fillRect(x * tile, y * tile, tile, tile);
         }
       }
+
+      ctx.fillStyle = 'rgba(0,0,0,0.65)';
+      ctx.fillRect(60, 225, 648, 126);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px Verdana';
+      ctx.fillText('Game failed to load.', 90, 265);
+      ctx.fillText(reason, 90, 295);
+      ctx.fillText('Check that game.js is accessible from this page path.', 90, 325);
+    }
+
+    function loadGameScript() {
+      if (scriptIndex >= scriptAttempts.length) {
+        showStartupFailure('Could not load game.js from ./game.js, game.js, or /game.js');
+        return;
+      }
+
+      var src = scriptAttempts[scriptIndex];
+      scriptIndex += 1;
+      var script = document.createElement('script');
+      script.src = src + '?v=' + Date.now();
+      script.async = false;
+
+      script.onload = function () {
+        window.setTimeout(function () {
+          if (!window.__chupa_started) {
+            loadGameScript();
+          }
+        }, 120);
+      };
+
+      script.onerror = function () {
+        loadGameScript();
+      };
+
+      document.body.appendChild(script);
+    }
+
+    loadGameScript();
+
+    window.setTimeout(function () {
+      if (!window.__chupa_started) {
+        showStartupFailure('Script loaded but did not start execution.');
+      }
+    }, 1200);
+  </script>
       ctx.fillStyle = 'rgba(0,0,0,0.65)';
       ctx.fillRect(96, 240, 576, 96);
       ctx.fillStyle = '#ffffff';
