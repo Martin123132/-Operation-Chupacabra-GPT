@@ -39,6 +39,25 @@
     <script>window.addEventListener("error",(e)=>{const d=document.getElementById("debugStatus");if(d)d.textContent=`Window error: ${e.message}`;});</script>
   </main>
 
+  <script>
+    (function loadGame() {
+      const candidates = ["game.js", "game (16).js", "game (15).js", "game (14).js"];
+      let i = 0;
+      const tryNext = () => {
+        if (i >= candidates.length) return;
+        const src = candidates[i++];
+        const tag = document.createElement("script");
+        tag.src = src;
+        tag.onload = () => {
+          const dbg = document.getElementById("debugStatus");
+          if (dbg) dbg.textContent = `Loaded script: ${src}`;
+        };
+        tag.onerror = () => tryNext();
+        document.body.appendChild(tag);
+      };
+      tryNext();
+    })();
+  </script>
   <script src="game.js"></script>
   <script>
   (function(){
