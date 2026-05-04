@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Operation Chupacabra-GPT: A Link to the Prompt</title>
-  <link rel="stylesheet" href="./style.css?v=startup-safety-003">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="game-shell">
@@ -36,47 +36,8 @@
 
     <p class="controls">Controls: Move with <strong>WASD</strong> or <strong>Arrow Keys</strong>, interact with <strong>E</strong>.</p>
     <div id="debugStatus" class="debug-line" aria-live="polite">JS loaded: pending | Canvas found: pending | Render loop started: pending</div>
-    <script>window.addEventListener("error",(e)=>{const d=document.getElementById("debugStatus");if(d)d.textContent=`Window error: ${e.message}`;});</script>
   </main>
 
-  <script>
-    (function loadGame() {
-      const candidates = ["game.js", "game (16).js", "game (15).js", "game (14).js"];
-      let i = 0;
-      const tryNext = () => {
-        if (i >= candidates.length) return;
-        const src = candidates[i++];
-        const tag = document.createElement("script");
-        tag.src = src;
-        tag.onload = () => {
-          const dbg = document.getElementById("debugStatus");
-          if (dbg) dbg.textContent = `Loaded script: ${src}`;
-        };
-        tag.onerror = () => tryNext();
-        document.body.appendChild(tag);
-      };
-      tryNext();
-    })();
-  </script>
   <script src="game.js"></script>
-  <script>
-  (function(){
-    const d=document.getElementById("debugStatus");
-    const s=document.createElement("script");
-    s.src="game.js";
-    s.onload=()=>{ if(d && d.textContent.includes("pending")) d.textContent="Script tag loaded game.js; awaiting game init"; };
-    s.onerror=()=>{ if(d) d.textContent="FAILED to load game.js from " + location.href; };
-    document.body.appendChild(s);
-  })();
-</script>
-    <script>
-      window.addEventListener("error", (e) => {
-        const d = document.getElementById("debugStatus");
-        if (d) d.textContent = `Window error: ${e.message}`;
-      });
-    </script>
-  </main>
-
-  <script src="./game.js?v=startup-safety-003"></script>
 </body>
 </html>
