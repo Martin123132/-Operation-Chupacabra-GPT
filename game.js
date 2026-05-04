@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initGame();
 });
 
+
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
 
