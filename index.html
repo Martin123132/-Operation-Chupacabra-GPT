@@ -38,6 +38,7 @@
     <p id="debugStatus" class="debug-line" aria-live="polite">
       CSS loaded: pending | JS loaded: pending | Canvas found: pending | Render loop started: pending
     </p>
+    <div id="scriptLoadStatus" aria-live="polite">External script not loaded yet</div>
   </main>
 
   <script>
@@ -45,6 +46,7 @@
     const dbg = document.getElementById("debugStatus");
     if (dbg) dbg.textContent = "INLINE SCRIPT RAN - external game.js check next";
   </script>
+  <script src="game.js"></script>
   <script src="./game.js?v=script-load-fix-001" defer></script>
 </body>
 </html>
