@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Operation Chupacabra-GPT: A Link to the Prompt</title>
-  <link rel="stylesheet" href="./style.css?v=script-load-fix-001">
+  <link rel="stylesheet" href="./style.css?v=startup-safety-002">
 </head>
 <body>
   <main class="game-shell">
     <h1>Operation Chupacabra-GPT: A Link to the Prompt</h1>
-    <p class="build-stamp">Build: SCRIPT-LOAD-FIX-001</p>
+    <p class="build-stamp">Build: STARTUP-SAFETY-002</p>
 
     <section id="hud" aria-label="Heads up display">
       <div><strong>Zone:</strong> <span id="zoneName">Coffee Shop Signal Grove</span></div>
@@ -35,18 +35,9 @@
     </section>
 
     <p class="controls">Controls: Move with <strong>WASD</strong> or <strong>Arrow Keys</strong>, interact with <strong>E</strong>.</p>
-    <p id="debugStatus" class="debug-line" aria-live="polite">
-      CSS loaded: pending | JS loaded: pending | Canvas found: pending | Render loop started: pending
-    </p>
-    <div id="scriptLoadStatus" aria-live="polite">External script not loaded yet</div>
+    <div id="debugStatus">JS loaded: pending | Canvas found: pending | Render loop started: pending</div>
   </main>
 
-  <script>
-    document.body.dataset.inlineBoot = "yes";
-    const dbg = document.getElementById("debugStatus");
-    if (dbg) dbg.textContent = "INLINE SCRIPT RAN - external game.js check next";
-  </script>
-  <script src="game.js"></script>
-  <script src="./game.js?v=script-load-fix-001" defer></script>
+  <script src="./game.js"></script>
 </body>
 </html>
