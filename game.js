@@ -1,3 +1,15 @@
+document.body.style.outline = "6px solid lime";
+const bootProof = document.createElement("div");
+bootProof.textContent = "BOOT PROOF: game.js executed";
+bootProof.style.position = "fixed";
+bootProof.style.left = "10px";
+bootProof.style.bottom = "10px";
+bootProof.style.zIndex = "99999";
+bootProof.style.background = "black";
+bootProof.style.color = "lime";
+bootProof.style.padding = "8px";
+document.body.appendChild(bootProof);
+
 console.log("GAME.JS TOP LEVEL EXECUTED STARTUP-SAFETY-002");
 window.CHUPA_JS_LOADED = true;
 document.addEventListener("DOMContentLoaded", () => {
@@ -6,24 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initGame();
 });
 
-let canvas = null;
-let ctx = null;
 
-let heartsEl = null;
-let signalEl = null;
-let grantEl = null;
-let inventoryEl = null;
-let objectiveEl = null;
-let zoneNameEl = null;
-let signalMessageEl = null;
-let dialogueBox = null;
-let dialogueText = null;
-let overlay = null;
-let overlayTitle = null;
-let overlayText = null;
-let restartBtn = null;
-let debugStatusEl = null;
-window.CHUPA_JS_LOADED = true;
 console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
 
 const canvas = document.getElementById("gameCanvas");
@@ -393,33 +388,12 @@ function bootGame() {
 }
 
 function initGame() {
-document.addEventListener("DOMContentLoaded", () => {
   if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
   startup.jsLoaded = true;
   startup.canvasFound = false;
+  startup.renderLoopStarted = false;
+
   try {
-    canvas = document.getElementById("gameCanvas");
-    ctx = canvas ? canvas.getContext("2d") : null;
-    heartsEl = document.getElementById("hearts");
-    signalEl = document.getElementById("signal");
-    grantEl = document.getElementById("grant");
-    inventoryEl = document.getElementById("inventory");
-    objectiveEl = document.getElementById("objective");
-    zoneNameEl = document.getElementById("zoneName");
-    signalMessageEl = document.getElementById("signalMessage");
-    dialogueBox = document.getElementById("dialogueBox");
-    dialogueText = document.getElementById("dialogueText");
-    overlay = document.getElementById("overlay");
-    overlayTitle = document.getElementById("overlayTitle");
-    overlayText = document.getElementById("overlayText");
-    restartBtn = document.getElementById("restartBtn");
-    debugStatusEl = document.getElementById("debugStatus");
-
-    startup.jsLoaded = true;
-    startup.canvasFound = false;
-    startup.renderLoopStarted = false;
-
-    if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
     bootGame();
   } catch (error) {
     console.error("Game startup crashed:", error);
@@ -428,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
     drawFallbackErrorScreen();
   }
 }
-});
 
 function resetGameState() {
   currentRoom = "grove";
