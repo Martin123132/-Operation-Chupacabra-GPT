@@ -1,8 +1,5 @@
-alert("game.js loaded");
 window.CHUPA_JS_LOADED = true;
-console.log("CHUPA game.js loaded SCRIPT-LOAD-FIX-001");
-const scriptLoadStatusEl = document.getElementById("scriptLoadStatus");
-if (scriptLoadStatusEl) scriptLoadStatusEl.textContent = "External script loaded";
+console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
@@ -80,6 +77,8 @@ const rooms = {
 };
 
 const player = { x: 2 * TILE + 8, y: 2 * TILE + 8, w: 16, h: 16, speed: 2.2, hearts: 3, invuln: 0 };
+const spawnPoint = { x: 2 * TILE + 8, y: 11 * TILE + 8 };
+const SPAWN_PROTECTION_MS = 1500;
 let currentRoom = "grove";
 let keys = {};
 let inventory = [];
@@ -90,7 +89,7 @@ let ended = false;
 
 function updateDebugStatus() {
   if (!debugStatusEl) return;
-  debugStatusEl.textContent = `CSS loaded: ${startup.cssLoaded ? "yes" : "no"} | JS loaded: ${startup.jsLoaded ? "yes" : "no"} | Canvas found: ${startup.canvasFound ? "yes" : "no"} | Render loop started: ${startup.renderLoopStarted ? "yes" : "no"}`;
+  debugStatusEl.textContent = `JS loaded: ${startup.jsLoaded ? "yes" : "no"} | Canvas found: ${startup.canvasFound ? "yes" : "checking"} | Render loop started: ${startup.renderLoopStarted ? "yes" : "no"}`;
 }
 
 function checkCssLoaded() {
@@ -206,10 +205,12 @@ function canMove(nx, ny, w, h) {
 
 function transitionRoomIfNeeded() {
   const room = getRoom();
-  if (player.x < 0 && room.exits.left) { currentRoom = room.exits.left; player.x = WORLD_W - player.w - 2; }
-  if (player.x + player.w > WORLD_W && room.exits.right) { currentRoom = room.exits.right; player.x = 2; }
-  if (player.y < 0 && room.exits.up) { currentRoom = room.exits.up; player.y = WORLD_H - player.h - 2; }
-  if (player.y + player.h > WORLD_H && room.exits.down) { currentRoom = room.exits.down; player.y = 2; }
+  let transitioned = false;
+  if (player.x < 0 && room.exits.left) { currentRoom = room.exits.left; player.x = WORLD_W - player.w - 2; transitioned = true; }
+  if (player.x + player.w > WORLD_W && room.exits.right) { currentRoom = room.exits.right; player.x = 2; transitioned = true; }
+  if (player.y < 0 && room.exits.up) { currentRoom = room.exits.up; player.y = WORLD_H - player.h - 2; transitioned = true; }
+  if (player.y + player.h > WORLD_H && room.exits.down) { currentRoom = room.exits.down; player.y = 2; transitioned = true; }
+  if (transitioned) player.invuln = Math.ceil((SPAWN_PROTECTION_MS / 1000) * 60);
 }
 
 function updateSignal() {
@@ -336,7 +337,6 @@ function update() {
 
 function bootGame() {
   startup.cssLoaded = checkCssLoaded();
-  updateDebugStatus();
 
   if (!canvas || !ctx) {
     console.error("Canvas startup failed: gameCanvas not found or 2D context unavailable.");
@@ -344,6 +344,8 @@ function bootGame() {
     updateDebugStatus();
     return;
   }
+  startup.canvasFound = true;
+  updateDebugStatus();
 
   drawBootFrame();
 
@@ -355,19 +357,20 @@ function bootGame() {
 
   if (restartBtn) restartBtn.addEventListener("click", () => window.location.reload());
 
+  resetGameState();
   updateObjective();
   updateSignal();
   updateHud();
 
   startup.renderLoopStarted = true;
   updateDebugStatus();
-  update();
+  requestAnimationFrame(update);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (debugStatusEl) debugStatusEl.textContent = "EXTERNAL GAME.JS RAN - canvas check next";
+  if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
   startup.jsLoaded = true;
-  updateDebugStatus();
+  startup.canvasFound = false;
   try {
     bootGame();
   } catch (error) {
@@ -377,3 +380,19 @@ document.addEventListener("DOMContentLoaded", () => {
     drawFallbackErrorScreen();
   }
 });
+
+function resetGameState() {
+  currentRoom = "grove";
+  player.hearts = 3;
+  player.x = spawnPoint.x;
+  player.y = spawnPoint.y;
+  player.invuln = Math.ceil((SPAWN_PROTECTION_MS / 1000) * 60);
+  keys = {};
+  inventory = [];
+  grantMoney = 5000;
+  signal = 0;
+  objective = "Find the SEGS Scanner.";
+  ended = false;
+  overlay.classList.add("hidden");
+  dialogueBox.classList.add("hidden");
+}
