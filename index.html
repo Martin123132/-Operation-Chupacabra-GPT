@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Operation Chupacabra-GPT: A Link to the Prompt</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=script-load-fix-001">
 </head>
 <body>
   <main class="game-shell">
     <h1>Operation Chupacabra-GPT: A Link to the Prompt</h1>
+    <p class="build-stamp">Build: SCRIPT-LOAD-FIX-001</p>
 
     <section id="hud" aria-label="Heads up display">
       <div><strong>Zone:</strong> <span id="zoneName">Coffee Shop Signal Grove</span></div>
@@ -39,6 +40,11 @@
     </p>
   </main>
 
-  <script src="./game.js" defer></script>
+  <script>
+    document.body.dataset.inlineBoot = "yes";
+    const dbg = document.getElementById("debugStatus");
+    if (dbg) dbg.textContent = "INLINE SCRIPT RAN - external game.js check next";
+  </script>
+  <script src="./game.js?v=script-load-fix-001" defer></script>
 </body>
 </html>

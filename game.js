@@ -1,4 +1,5 @@
 window.CHUPA_JS_LOADED = true;
+console.log("CHUPA game.js loaded SCRIPT-LOAD-FIX-001");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
@@ -361,6 +362,7 @@ function bootGame() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (debugStatusEl) debugStatusEl.textContent = "EXTERNAL GAME.JS RAN - canvas check next";
   startup.jsLoaded = true;
   updateDebugStatus();
   try {
