@@ -398,3 +398,9 @@ function resetGameState() {
   overlay.classList.add("hidden");
   dialogueBox.classList.add("hidden");
 }
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initGame, { once: true });
+} else {
+  initGame();
+}
