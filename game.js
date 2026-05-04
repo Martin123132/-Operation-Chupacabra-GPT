@@ -72,6 +72,98 @@
 
     for (x = 4; x < 20; x++) {
       if (x !== 11) world.walls.push({ x: x, y: 8 });
+  }
+
+  if (!canvas || !ctx) {
+    setText(logEl, 'Rendering error: unable to initialize canvas in this browser context.');
+    return;
+  }
+
+  var TILE = 32;
+  var MAP_W = 24;
+  var MAP_H = 18;
+
+  var keys = {};
+  var frame = 0;
+
+  var player = {
+    x: 2 * TILE,
+    y: 2 * TILE,
+    size: 22,
+    speed: 2.4,
+    facing: 'down',
+    color: '#f8f8f2'
+  };
+
+  var world = {
+    walls: [],
+    water: [],
+    decor: [],
+    nodes: [
+      { x: 5, y: 5, label: 'Ghost Forum Pulse' },
+      { x: 16, y: 4, label: 'SEGS Echo' },
+      { x: 8, y: 13, label: 'Shed-Net Distortion' },
+      { x: 19, y: 11, label: 'Cabin Conclusion Signal' }
+    ],
+    scanned: 0,
+    finished: false
+  };
+
+  function buildWorld() {
+    var x;
+    var y;
+
+    for (x = 0; x < MAP_W; x++) {
+      world.walls.push({ x: x, y: 0 });
+      world.walls.push({ x: x, y: MAP_H - 1 });
+    }
+
+    for (y = 1; y < MAP_H - 1; y++) {
+      world.walls.push({ x: 0, y: y });
+      world.walls.push({ x: MAP_W - 1, y: y });
+    }
+
+    for (x = 4; x < 20; x++) {
+      if (x !== 11) world.walls.push({ x: x, y: 8 });
+    }
+
+    for (x = 9; x < 15; x++) world.water.push({ x: x, y: 14 });
+    for (y = 3; y < 7; y++) world.water.push({ x: 13, y: y });
+
+    world.decor.push({ x: 3, y: 3, kind: 'terminal' });
+    world.decor.push({ x: 20, y: 15, kind: 'terminal' });
+    world.decor.push({ x: 6, y: 10, kind: 'crate' });
+    world.decor.push({ x: 18, y: 6, kind: 'crate' });
+  }
+
+  function drawTile(x, y, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+  }
+
+  function drawGround() {
+    var x;
+    var y;
+    var base;
+
+    for (y = 0; y < MAP_H; y++) {
+      for (x = 0; x < MAP_W; x++) {
+        base = (x + y) % 2 === 0 ? '#4e7a52' : '#446b49';
+        drawTile(x, y, base);
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(x * TILE + 2, y * TILE + 2, 2, 2);
+      }
+    }
+  }
+
+  function drawWater() {
+    var i, w, ripple;
+    for (i = 0; i < world.water.length; i++) {
+      w = world.water[i];
+      drawTile(w.x, w.y, '#2459a6');
+      ripple = (frame + w.x + w.y) % 30;
+      ctx.fillStyle = 'rgba(143,208,255,0.55)';
+      ctx.fillRect(w.x * TILE + ripple, w.y * TILE + 10, 6, 3);
     }
 
     for (x = 9; x < 15; x++) world.water.push({ x: x, y: 14 });
@@ -276,4 +368,47 @@
   window.addEventListener('keyup', onKeyUp);
   drawFrame();
   raf(loop);
+  }
+
+  function drawFrame() {
+    drawGround();
+    drawWater();
+    drawWalls();
+    drawDecor();
+    drawNodes();
+    drawPlayer();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+  }
+
+  function loop() {
+    frame += 1;
+    updatePlayer();
+    drawFrame();
+    window.requestAnimationFrame(loop);
+  }
+
+  function onKeyDown(e) {
+    var key = e.key;
+    if (key && key.length === 1) key = key.toLowerCase();
+    keys[key] = true;
+
+    if (key === 'arrowup' || key === 'arrowdown' || key === 'arrowleft' || key === 'arrowright' || e.code === 'Space') {
+      e.preventDefault();
+    }
+
+    if (e.code === 'Space') scanNearbyNode();
+  }
+
+  function onKeyUp(e) {
+    var key = e.key;
+    if (key && key.length === 1) key = key.toLowerCase();
+    keys[key] = false;
+  }
+
+  buildWorld();
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+  loop();
 })();
