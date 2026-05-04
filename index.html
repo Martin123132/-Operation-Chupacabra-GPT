@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Operation Chupacabra-GPT: A Link to the Prompt</title>
-  <link rel="stylesheet" href="./style.css?v=startup-safety-002">
+  <link rel="stylesheet" href="./style.css?v=startup-safety-003">
 </head>
 <body>
   <main class="game-shell">
     <h1>Operation Chupacabra-GPT: A Link to the Prompt</h1>
-    <p class="build-stamp">Build: STARTUP-SAFETY-002</p>
+    <p class="build-stamp">Build: STARTUP-SAFETY-003</p>
 
     <section id="hud" aria-label="Heads up display">
       <div><strong>Zone:</strong> <span id="zoneName">Coffee Shop Signal Grove</span></div>
@@ -36,6 +36,7 @@
 
     <p class="controls">Controls: Move with <strong>WASD</strong> or <strong>Arrow Keys</strong>, interact with <strong>E</strong>.</p>
     <div id="debugStatus" class="debug-line" aria-live="polite">JS loaded: pending | Canvas found: pending | Render loop started: pending</div>
+    <script>window.addEventListener("error",(e)=>{const d=document.getElementById("debugStatus");if(d)d.textContent=`Window error: ${e.message}`;});</script>
   </main>
 
   <script>
@@ -57,5 +58,25 @@
       tryNext();
     })();
   </script>
+  <script src="game.js"></script>
+  <script>
+  (function(){
+    const d=document.getElementById("debugStatus");
+    const s=document.createElement("script");
+    s.src="game.js";
+    s.onload=()=>{ if(d && d.textContent.includes("pending")) d.textContent="Script tag loaded game.js; awaiting game init"; };
+    s.onerror=()=>{ if(d) d.textContent="FAILED to load game.js from " + location.href; };
+    document.body.appendChild(s);
+  })();
+</script>
+    <script>
+      window.addEventListener("error", (e) => {
+        const d = document.getElementById("debugStatus");
+        if (d) d.textContent = `Window error: ${e.message}`;
+      });
+    </script>
+  </main>
+
+  <script src="./game.js?v=startup-safety-003"></script>
 </body>
 </html>
