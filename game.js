@@ -1,3 +1,28 @@
+console.log("GAME.JS TOP LEVEL EXECUTED STARTUP-SAFETY-002");
+window.CHUPA_JS_LOADED = true;
+document.addEventListener("DOMContentLoaded", () => {
+  const dbg = document.getElementById("debugStatus");
+  if (dbg) dbg.textContent = "GAME.JS DOMContentLoaded fired";
+  initGame();
+});
+
+let canvas = null;
+let ctx = null;
+
+let heartsEl = null;
+let signalEl = null;
+let grantEl = null;
+let inventoryEl = null;
+let objectiveEl = null;
+let zoneNameEl = null;
+let signalMessageEl = null;
+let dialogueBox = null;
+let dialogueText = null;
+let overlay = null;
+let overlayTitle = null;
+let overlayText = null;
+let restartBtn = null;
+let debugStatusEl = null;
 window.CHUPA_JS_LOADED = true;
 console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
 
@@ -22,7 +47,7 @@ const debugStatusEl = document.getElementById("debugStatus");
 const startup = {
   cssLoaded: false,
   jsLoaded: true,
-  canvasFound: Boolean(canvas && ctx),
+  canvasFound: false,
   renderLoopStarted: false
 };
 
@@ -367,18 +392,42 @@ function bootGame() {
   requestAnimationFrame(update);
 }
 
+function initGame() {
 document.addEventListener("DOMContentLoaded", () => {
   if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
   startup.jsLoaded = true;
   startup.canvasFound = false;
   try {
+    canvas = document.getElementById("gameCanvas");
+    ctx = canvas ? canvas.getContext("2d") : null;
+    heartsEl = document.getElementById("hearts");
+    signalEl = document.getElementById("signal");
+    grantEl = document.getElementById("grant");
+    inventoryEl = document.getElementById("inventory");
+    objectiveEl = document.getElementById("objective");
+    zoneNameEl = document.getElementById("zoneName");
+    signalMessageEl = document.getElementById("signalMessage");
+    dialogueBox = document.getElementById("dialogueBox");
+    dialogueText = document.getElementById("dialogueText");
+    overlay = document.getElementById("overlay");
+    overlayTitle = document.getElementById("overlayTitle");
+    overlayText = document.getElementById("overlayText");
+    restartBtn = document.getElementById("restartBtn");
+    debugStatusEl = document.getElementById("debugStatus");
+
+    startup.jsLoaded = true;
+    startup.canvasFound = false;
+    startup.renderLoopStarted = false;
+
+    if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
     bootGame();
   } catch (error) {
     console.error("Game startup crashed:", error);
-    startup.renderLoopStarted = false;
-    updateDebugStatus();
+    const dbg = document.getElementById("debugStatus");
+    if (dbg) dbg.textContent = `GAME.JS ERROR: ${error.message}`;
     drawFallbackErrorScreen();
   }
+}
 });
 
 function resetGameState() {
