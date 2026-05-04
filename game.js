@@ -13,14 +13,13 @@ document.body.appendChild(bootProof);
 
 console.log("GAME.JS TOP LEVEL EXECUTED STARTUP-SAFETY-002");
 window.CHUPA_JS_LOADED = true;
+console.log("CHUPA game.js loaded STARTUP-SAFETY-003");
+
 document.addEventListener("DOMContentLoaded", () => {
   const dbg = document.getElementById("debugStatus");
   if (dbg) dbg.textContent = "GAME.JS DOMContentLoaded fired";
   initGame();
 });
-
-
-console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
