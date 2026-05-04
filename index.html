@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operation Chupacabra-GPT</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header>
+      <h1>Operation Chupacabra-GPT</h1>
+      <p>SNES-inspired top-down field mission. Recover evidence of the Conscious Missing Model.</p>
+    </header>
+
+    <canvas id="game" width="768" height="576" aria-label="Operation Chupacabra game"></canvas>
+
+    <section class="hud">
+      <div><strong>Mission:</strong> <span id="mission">Find all anomalous signal nodes</span></div>
+      <div><strong>Logs:</strong> <span id="log">Use Arrow Keys / WASD and Space to scan.</span></div>
+      <div><strong>Progress:</strong> <span id="progress">0 / 4 nodes</span></div>
+    </section>
+
+    <section class="controls">
+      <h2>Controls</h2>
+      <ul>
+        <li>Move: WASD or Arrow keys</li>
+        <li>Scan/Interact: Space</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
