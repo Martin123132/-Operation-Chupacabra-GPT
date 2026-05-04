@@ -1,5 +1,7 @@
+window.CHUPA_JS_LOADED = true;
+
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas ? canvas.getContext("2d") : null;
 
 const heartsEl = document.getElementById("hearts");
 const signalEl = document.getElementById("signal");
@@ -14,6 +16,14 @@ const overlay = document.getElementById("overlay");
 const overlayTitle = document.getElementById("overlayTitle");
 const overlayText = document.getElementById("overlayText");
 const restartBtn = document.getElementById("restartBtn");
+const debugStatusEl = document.getElementById("debugStatus");
+
+const startup = {
+  cssLoaded: false,
+  jsLoaded: true,
+  canvasFound: Boolean(canvas && ctx),
+  renderLoopStarted: false
+};
 
 const TILE = 32;
 const MAP_W = 20;
@@ -73,6 +83,48 @@ let grantMoney = 5000;
 let signal = 0;
 let objective = "Find the SEGS Scanner.";
 let ended = false;
+
+function updateDebugStatus() {
+  if (!debugStatusEl) return;
+  debugStatusEl.textContent = `CSS loaded: ${startup.cssLoaded ? "yes" : "no"} | JS loaded: ${startup.jsLoaded ? "yes" : "no"} | Canvas found: ${startup.canvasFound ? "yes" : "no"} | Render loop started: ${startup.renderLoopStarted ? "yes" : "no"}`;
+}
+
+function checkCssLoaded() {
+  const shell = document.querySelector(".game-shell");
+  if (!shell) return false;
+  const style = window.getComputedStyle(shell);
+  return parseFloat(style.borderTopWidth) >= 1;
+}
+
+function drawFallbackErrorScreen() {
+  if (!ctx || !canvas) return;
+  ctx.fillStyle = "#1b0d0d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#852e2e";
+  ctx.fillRect(8, 8, canvas.width - 16, canvas.height - 16);
+  ctx.fillStyle = "#fff0f0";
+  ctx.font = "bold 20px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME STARTUP ERROR - CHECK CONSOLE", canvas.width / 2, canvas.height / 2);
+}
+
+function drawBootFrame() {
+  if (!ctx || !canvas) return;
+  ctx.fillStyle = "#162035";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#2f4e7a";
+  for (let y = 0; y < canvas.height; y += 32) {
+    for (let x = 0; x < canvas.width; x += 32) {
+      if ((x + y) % 64 === 0) {
+        ctx.fillRect(x, y, 32, 32);
+      }
+    }
+  }
+  ctx.fillStyle = "#ffcd4a";
+  ctx.font = "bold 16px monospace";
+  ctx.textAlign = "left";
+  ctx.fillText("Booting map renderer...", 16, 28);
+}
 
 function makeEdgeMap() {
   const m = [];
@@ -278,14 +330,45 @@ function update() {
   requestAnimationFrame(update);
 }
 
-window.addEventListener("keydown", (e) => {
-  keys[e.key.toLowerCase()] = true;
-  if (e.key.toLowerCase() === "e") interact();
-});
-window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
-restartBtn.addEventListener("click", () => window.location.reload());
+function bootGame() {
+  startup.cssLoaded = checkCssLoaded();
+  updateDebugStatus();
 
-updateObjective();
-updateSignal();
-updateHud();
-update();
+  if (!canvas || !ctx) {
+    console.error("Canvas startup failed: gameCanvas not found or 2D context unavailable.");
+    startup.canvasFound = false;
+    updateDebugStatus();
+    return;
+  }
+
+  drawBootFrame();
+
+  window.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+    if (e.key.toLowerCase() === "e") interact();
+  });
+  window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+  if (restartBtn) restartBtn.addEventListener("click", () => window.location.reload());
+
+  updateObjective();
+  updateSignal();
+  updateHud();
+
+  startup.renderLoopStarted = true;
+  updateDebugStatus();
+  update();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  startup.jsLoaded = true;
+  updateDebugStatus();
+  try {
+    bootGame();
+  } catch (error) {
+    console.error("Game startup crashed:", error);
+    startup.renderLoopStarted = false;
+    updateDebugStatus();
+    drawFallbackErrorScreen();
+  }
+});

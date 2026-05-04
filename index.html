@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Operation Chupacabra-GPT: A Link to the Prompt</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="game-shell">
@@ -34,8 +34,11 @@
     </section>
 
     <p class="controls">Controls: Move with <strong>WASD</strong> or <strong>Arrow Keys</strong>, interact with <strong>E</strong>.</p>
+    <p id="debugStatus" class="debug-line" aria-live="polite">
+      CSS loaded: pending | JS loaded: pending | Canvas found: pending | Render loop started: pending
+    </p>
   </main>
 
-  <script src="game.js"></script>
+  <script src="./game.js" defer></script>
 </body>
 </html>
