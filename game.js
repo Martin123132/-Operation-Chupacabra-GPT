@@ -1,3 +1,5 @@
+window.CHUPA_JS_LOADED = true;
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
 
@@ -358,12 +360,15 @@ function bootGame() {
   update();
 }
 
-try {
+document.addEventListener("DOMContentLoaded", () => {
+  startup.jsLoaded = true;
   updateDebugStatus();
-  bootGame();
-} catch (error) {
-  console.error("Game startup crashed:", error);
-  startup.renderLoopStarted = false;
-  updateDebugStatus();
-  drawFallbackErrorScreen();
-}
+  try {
+    bootGame();
+  } catch (error) {
+    console.error("Game startup crashed:", error);
+    startup.renderLoopStarted = false;
+    updateDebugStatus();
+    drawFallbackErrorScreen();
+  }
+});
