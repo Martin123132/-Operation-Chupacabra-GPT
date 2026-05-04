@@ -36,8 +36,10 @@
 
     <p class="controls">Controls: Move with <strong>WASD</strong> or <strong>Arrow Keys</strong>, interact with <strong>E</strong>.</p>
     <div id="debugStatus" class="debug-line" aria-live="polite">JS loaded: pending | Canvas found: pending | Render loop started: pending</div>
+    <script>window.addEventListener("error",(e)=>{const d=document.getElementById("debugStatus");if(d)d.textContent=`Window error: ${e.message}`;});</script>
   </main>
 
+  <script src="game.js?v=startup-safety-003" onload="document.getElementById('debugStatus').textContent='Script request loaded: game.js?v=startup-safety-003'" onerror="document.getElementById('debugStatus').textContent='Script request FAILED: game.js?v=startup-safety-003'"></script>
   <script src="game.js"></script>
 </body>
 </html>
