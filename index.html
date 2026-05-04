@@ -50,6 +50,18 @@
 
       for (y = 0; y < canvas.height / tile; y++) {
         for (x = 0; x < canvas.width / tile; x++) {
+
+  <script>
+    window.__chupa_started = false;
+    window.setTimeout(function () {
+      if (window.__chupa_started) return;
+      var canvas = document.getElementById('game');
+      var log = document.getElementById('log');
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext('2d');
+      var tile = 32;
+      for (var y = 0; y < canvas.height / tile; y++) {
+        for (var x = 0; x < canvas.width / tile; x++) {
           ctx.fillStyle = (x + y) % 2 === 0 ? '#3a4d69' : '#31435d';
           ctx.fillRect(x * tile, y * tile, tile, tile);
         }
@@ -99,5 +111,16 @@
       }
     }, 1200);
   </script>
+      ctx.fillStyle = 'rgba(0,0,0,0.65)';
+      ctx.fillRect(96, 240, 576, 96);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px Verdana';
+      ctx.fillText('Game script did not start. Hard refresh and retry.', 126, 280);
+      if (log) {
+        log.textContent = 'Startup failure detected: external script was blocked or failed to load.';
+      }
+    }, 700);
+  </script>
+  <script src="game.js"></script>
 </body>
 </html>
