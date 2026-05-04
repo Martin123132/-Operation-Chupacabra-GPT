@@ -1,25 +1,3 @@
-document.body.insertAdjacentHTML("afterbegin", "<div style='position:fixed;top:0;left:0;z-index:99999;background:red;color:white;padding:8px'>REAL game.js loaded</div>");
-document.body.style.outline = "6px solid lime";
-const bootProof = document.createElement("div");
-bootProof.textContent = "BOOT PROOF: game.js executed";
-bootProof.style.position = "fixed";
-bootProof.style.left = "10px";
-bootProof.style.bottom = "10px";
-bootProof.style.zIndex = "99999";
-bootProof.style.background = "black";
-bootProof.style.color = "lime";
-bootProof.style.padding = "8px";
-document.body.appendChild(bootProof);
-
-console.log("GAME.JS TOP LEVEL EXECUTED STARTUP-SAFETY-002");
-window.CHUPA_JS_LOADED = true;
-console.log("CHUPA game.js loaded STARTUP-SAFETY-003");
-
-document.addEventListener("DOMContentLoaded", () => {
-  const dbg = document.getElementById("debugStatus");
-  if (dbg) dbg.textContent = "GAME.JS DOMContentLoaded fired";
-  initGame();
-});
 
 
 
