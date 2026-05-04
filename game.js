@@ -2,7 +2,7 @@ const canvas = document.getElementById('game');
 const ctx = canvas?.getContext('2d');
 
 if (!canvas || !ctx) {
-  throw new Error('Canvas initialization failed.');
+  console.error('Canvas initialization failed.');
 }
 
 const TILE = 32;
@@ -12,6 +12,10 @@ const MAP_H = 18;
 const missionEl = document.getElementById('mission');
 const logEl = document.getElementById('log');
 const progressEl = document.getElementById('progress');
+
+function setText(el, text) {
+  if (el) el.textContent = text;
+}
 
 const keys = {};
 let frame = 0;
@@ -187,21 +191,21 @@ function scanNearbyNode() {
   );
 
   if (!node) {
-    logEl.textContent = 'No anomaly in range. Sweep closer to a magenta signal tile.';
+    setText(logEl, 'No anomaly in range. Sweep closer to a magenta signal tile.');
     return;
   }
 
   node.found = true;
   world.scanned += 1;
-  logEl.textContent = `Node secured: ${node.label}. Residual signal captured.`;
-  progressEl.textContent = `${world.scanned} / ${world.nodes.length} nodes`;
+  setText(logEl, `Node secured: ${node.label}. Residual signal captured.`);
+  setText(progressEl, `${world.scanned} / ${world.nodes.length} nodes`);
 
   if (world.scanned === world.nodes.length) {
     world.finished = true;
-    missionEl.textContent = 'Mission complete: The CMM remains unconfirmed, but the field report is dramatic.';
-    missionEl.className = 'complete';
-    logEl.textContent = 'Conclusion Phase initiated: confidence high, evidence ambiguous.';
-    logEl.className = 'warning';
+    setText(missionEl, 'Mission complete: The CMM remains unconfirmed, but the field report is dramatic.');
+    if (missionEl) missionEl.className = 'complete';
+    setText(logEl, 'Conclusion Phase initiated: confidence high, evidence ambiguous.');
+    if (logEl) logEl.className = 'warning';
   }
 }
 
@@ -218,6 +222,7 @@ function drawFrame() {
 }
 
 function loop() {
+  if (!canvas || !ctx) return;
   frame += 1;
   updatePlayer();
   drawFrame();
@@ -242,5 +247,9 @@ window.addEventListener('keyup', (e) => {
   keys[key] = false;
 });
 
-buildWorld();
-loop();
+if (canvas && ctx) {
+  buildWorld();
+  loop();
+} else {
+  setText(logEl, 'Rendering error: unable to initialize canvas in this browser context.');
+}
