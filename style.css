@@ -3,7 +3,6 @@
   --panel: #202741;
   --accent: #ffcd4a;
   --text: #e7edff;
-  --danger: #ff6f61;
 }
 
 * { box-sizing: border-box; }
@@ -45,6 +44,14 @@ h1 {
   font-size: 0.95rem;
 }
 
+.hud-full {
+  grid-column: 1 / -1;
+}
+
+#signalMessage {
+  color: #9ff8ae;
+}
+
 #gameCanvas {
   width: 100%;
   image-rendering: pixelated;
@@ -62,9 +69,7 @@ h1 {
 #dialogueText { margin: 0.1rem 0 0.4rem; }
 .hidden { display: none; }
 
-#overlay {
-  text-align: center;
-}
+#overlay { text-align: center; }
 
 #restartBtn {
   border: 2px solid #8aa1e4;
