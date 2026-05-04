@@ -1,3 +1,4 @@
+document.body.insertAdjacentHTML("afterbegin", "<div style='position:fixed;top:0;left:0;z-index:99999;background:red;color:white;padding:8px'>REAL game.js loaded</div>");
 document.body.style.outline = "6px solid lime";
 const bootProof = document.createElement("div");
 bootProof.textContent = "BOOT PROOF: game.js executed";
