@@ -1,17 +1,3 @@
-document.body.style.outline = "6px solid lime";
-const bootProof = document.createElement("div");
-bootProof.textContent = "BOOT PROOF: game.js executed";
-bootProof.style.position = "fixed";
-bootProof.style.left = "10px";
-bootProof.style.bottom = "10px";
-bootProof.style.zIndex = "99999";
-bootProof.style.background = "black";
-bootProof.style.color = "lime";
-bootProof.style.padding = "8px";
-document.body.appendChild(bootProof);
-
-console.log("GAME.JS TOP LEVEL EXECUTED STARTUP-SAFETY-002");
-window.CHUPA_JS_LOADED = true;
 document.addEventListener("DOMContentLoaded", () => {
   const dbg = document.getElementById("debugStatus");
   if (dbg) dbg.textContent = "GAME.JS DOMContentLoaded fired";
@@ -19,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas ? canvas.getContext("2d") : null;

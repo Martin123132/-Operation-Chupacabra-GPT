@@ -38,6 +38,24 @@
     <div id="debugStatus" class="debug-line" aria-live="polite">JS loaded: pending | Canvas found: pending | Render loop started: pending</div>
   </main>
 
-  <script src="./game.js"></script>
+  <script>
+    (function loadGame() {
+      const candidates = ["game.js", "game (16).js", "game (15).js", "game (14).js"];
+      let i = 0;
+      const tryNext = () => {
+        if (i >= candidates.length) return;
+        const src = candidates[i++];
+        const tag = document.createElement("script");
+        tag.src = src;
+        tag.onload = () => {
+          const dbg = document.getElementById("debugStatus");
+          if (dbg) dbg.textContent = `Loaded script: ${src}`;
+        };
+        tag.onerror = () => tryNext();
+        document.body.appendChild(tag);
+      };
+      tryNext();
+    })();
+  </script>
 </body>
 </html>
