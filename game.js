@@ -23,6 +23,26 @@ let overlayTitle = null;
 let overlayText = null;
 let restartBtn = null;
 let debugStatusEl = null;
+window.CHUPA_JS_LOADED = true;
+console.log("CHUPA game.js loaded STARTUP-SAFETY-002");
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas ? canvas.getContext("2d") : null;
+
+const heartsEl = document.getElementById("hearts");
+const signalEl = document.getElementById("signal");
+const grantEl = document.getElementById("grant");
+const inventoryEl = document.getElementById("inventory");
+const objectiveEl = document.getElementById("objective");
+const zoneNameEl = document.getElementById("zoneName");
+const signalMessageEl = document.getElementById("signalMessage");
+const dialogueBox = document.getElementById("dialogueBox");
+const dialogueText = document.getElementById("dialogueText");
+const overlay = document.getElementById("overlay");
+const overlayTitle = document.getElementById("overlayTitle");
+const overlayText = document.getElementById("overlayText");
+const restartBtn = document.getElementById("restartBtn");
+const debugStatusEl = document.getElementById("debugStatus");
 
 const startup = {
   cssLoaded: false,
@@ -373,6 +393,10 @@ function bootGame() {
 }
 
 function initGame() {
+document.addEventListener("DOMContentLoaded", () => {
+  if (debugStatusEl) debugStatusEl.textContent = "JS loaded: yes | Canvas found: checking | Render loop started: no";
+  startup.jsLoaded = true;
+  startup.canvasFound = false;
   try {
     canvas = document.getElementById("gameCanvas");
     ctx = canvas ? canvas.getContext("2d") : null;
@@ -404,6 +428,7 @@ function initGame() {
     drawFallbackErrorScreen();
   }
 }
+});
 
 function resetGameState() {
   currentRoom = "grove";
